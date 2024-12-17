@@ -5,23 +5,24 @@ services:
     image: wordpress:latest
     container_name: wp-test
     ports:
-      - "8080:80"
+      - "8000:80"
     environment:
       WORDPRESS_DB_HOST: db
-      WORDPRESS_DB_USER: root
-      WORDPRESS_DB_PASSWORD: root
-      WORDPRESS_DB_NAME: wp_test
+      WORDPRESS_DB_USER: example
+      WORDPRESS_DB_PASSWORD: example
+      WORDPRESS_DB_NAME: example
     volumes:
       - ./wp-content:/var/www/html/wp-content
-    depends_on:
-      - db
+      - ./wp-cli.phar:/usr/local/bin/wp # Dodanie WP-CLI
 
   db:
     image: mysql:5.7
     container_name: wp-db
     environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: wp_test
+      MYSQL_ROOT_PASSWORD: example
+      MYSQL_DATABASE: example
+      MYSQL_USER: example
+      MYSQL_PASSWORD: example
     volumes:
       - db_data:/var/lib/mysql
 

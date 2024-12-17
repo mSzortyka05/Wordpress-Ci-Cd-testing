@@ -4,18 +4,24 @@ on:
   push:
     branches:
       - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
+      # Checkout repo
       - name: Checkout code
         uses: actions/checkout@v3
 
+      # Set up Docker
       - name: Set up Docker
         uses: docker/setup-buildx-action@v2
 
+      # Install Docker Compose
       - name: Install Docker Compose
         run: |
           sudo apt-get update
@@ -24,13 +30,30 @@ jobs:
       - name: Change to project directory
         run: cd wp-test-site
 
-      - name: Start WordPress containers
+      # Start WordPress and MySQL containers using docker-compose
+      - name: Start WordPress and MySQL containers
         run: |
           cd wp-test-site
           docker-compose up -d
 
+      # Install WP-CLI in the WordPress container
+      - name: Install WP-CLI in the container
+        run: |
+          docker exec wp-test curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
+          docker exec wp-test chmod +x wp-cli.phar
+          docker exec wp-test mv wp-cli.phar /usr/local/bin/wp
+
+      # Check WordPress core version
+      - name: Check WP core version
+        run: docker exec wp-test wp core version
+
+      # Run PHPUnit tests in WordPress container
       - name: Run PHPUnit tests
         run: |
           sleep 10
-          docker exec wp-test wp core version
           docker exec wp-test ./vendor/bin/phpunit
+
+      # Shut down Docker containers after tests
+      - name: Shut down Docker containers
+        run: |
+          docker-compose down
