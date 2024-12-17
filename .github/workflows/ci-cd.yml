@@ -32,5 +32,5 @@ jobs:
       - name: Run PHPUnit tests
         run: |
           sleep 10
-          docker exec -it wp-test wp core version
-          docker exec -it wp-test ./vendor/bin/phpunit
+          docker exec wp-test wp core version
+          docker exec wp-test ./vendor/bin/phpunit
