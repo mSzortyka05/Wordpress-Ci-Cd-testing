@@ -21,11 +21,16 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y docker-compose
 
+      - name: Change to project directory
+        run: cd wp-test-site
+
       - name: Start WordPress containers
-        run: docker-compose up -d
+        run: |
+          cd wp-test-site
+          docker-compose up -d
 
       - name: Run PHPUnit tests
         run: |
-          sleep 10 # Czekanie na uruchomienie kontenerów
+          sleep 10
           docker exec -it wp-test wp core version
           docker exec -it wp-test ./vendor/bin/phpunit
