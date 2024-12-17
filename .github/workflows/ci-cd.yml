@@ -16,10 +16,16 @@ jobs:
       - name: Set up Docker
         uses: docker/setup-buildx-action@v2
 
+      - name: Install Docker Compose
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y docker-compose
+
       - name: Start WordPress containers
         run: docker-compose up -d
 
       - name: Run PHPUnit tests
         run: |
-          docker exec -it wp-test wp plugin install --activate
+          sleep 10 # Czekanie na uruchomienie kontenerów
+          docker exec -it wp-test wp core version
           docker exec -it wp-test ./vendor/bin/phpunit
